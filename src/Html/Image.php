@@ -30,10 +30,23 @@ class Image
     if (isset($this->binarySize)) { // process binary data
       return;
     } else { // process hexadecimal data
-      $output .= base64_encode(pack('H*',$this->ImageData));
+//      $output .= base64_encode(pack('H*',$this->ImageData));
+      $output .= base64_encode($this->convertImageToJpeg(pack('H*',$this->ImageData)));
     }
     
     $output .= "\" />";
     return $output;
   }
+
+
+  public function convertImageToJpeg($fileContents){
+    $image = new \Imagick();
+    $image->readImageBlob($fileContents);
+    // convert the output to JPEG
+    $image->setImageFormat('jpeg');
+    $image->setImageCompressionQuality(90);
+    return $image->getImageBlob();
+  }
+
+
 }
