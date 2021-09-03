@@ -25,24 +25,36 @@ class Image
   public function PrintImage()
   {
     // <img src="data:image/{FORMAT};base64,{#BDATA}" />
-    $output = "<img src=\"data:image/{$this->format};base64,";
+    //$output = "<img src=\"data:image/{$this->format};base64,";
+    $output = "";
     
     if (isset($this->binarySize)) { // process binary data
       return;
     } else { // process hexadecimal data
-//      $output .= base64_encode(pack('H*',$this->ImageData));
-      $output .= base64_encode($this->convertImageToJpeg(pack('H*',$this->ImageData)));
+      if($this->format == 'bmp'){
+        $imageData = $this->convertImageToJpeg(pack('H*',$this->ImageData));
+      }else{
+        $imageData .= base64_encode(pack('H*',$this->ImageData));
+      }
+
+      $output = "<img src=\"data:image/{$this->format};base64,";
+      $output .= base64_encode($imageData);
+      $output .= "\" />";
     }
     
-    $output .= "\" />";
+    
     return $output;
   }
 
 
   public function convertImageToJpeg($fileContents){
+    if(){
+      return $this->ImageData;
+    }
     $image = new \Imagick();
     $image->readImageBlob($fileContents);
     // convert the output to JPEG
+    $this->format = 'jpeg';
     $image->setImageFormat('jpeg');
     $image->setImageCompressionQuality(90);
     return $image->getImageBlob();
